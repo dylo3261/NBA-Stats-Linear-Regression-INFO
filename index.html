@@ -121,6 +121,7 @@ pts_model.predict(hypothetical_scaled_df)</code></div>
     <div class="chart-placeholder" style="margin-top:16px;">
       <img class="image" src="./Chart2.png"/>
     </div>
+    <p>As you can see the R^2 score is .974 which is extremely good. This is because field goal attempts per game is a almost direct mathematical input to the amount of points scored in a game. Unless the player sucks, more attempts in the NBA usually means more points.</p>
   </section>
 
   <!-- INSIGHT -->
@@ -131,7 +132,7 @@ pts_model.predict(hypothetical_scaled_df)</code></div>
 The coefficients in the model clearly show that shot attempts per game is the strongest predictor of scoring, way higher over field goal percentage. While making your actual shots mattered, the actual volume showed over a times three multiplier in relevance. This makes sense because a bench player who got 3 minutes but made 2/2 shots will have less points than a player who played for 20 minutes but had a 67% field goal percentage.</p>
 
     <div class="insight">
-      <p>The model confirms what most basketball fans already know: Lebron James is only the all time leading scorer because hes been in the league since the dinosaur ages! If Michael Jordan played just as long as Lebron, I think there would be a more definitive answer as to who the GOAT is.</p>
+      <p>The model confirms what most basketball fans already know: Lebron James is only the all time leading scorer because hes been in the league since the dinosaur ages! If Michael Jordan played just as long as Lebron, He would have more shot attempts and therefore points, meaning there would be a more definitive answer as to who the GOAT is.</p>
     </div>
   </section>
 
@@ -141,6 +142,7 @@ The coefficients in the model clearly show that shot attempts per game is the st
     <h3>What the model can't see</h3>
     <p>Per-game stats conflate player skill with coaching decisions. A player on a bad team may get more shot attempts simply because no one else is available. Think of Lebron James in the 2007 NBA Finals. The model also can't account for role players (defensive players like Dennis Rodman who never were meant to score), injury-shortened seasons, or team offensive system.</p>
     <p>A more complete model would incorporate team context, advanced metrics like usage rate, and opponent defensive ratings.</p>
+    <p>It goes without saying that this model was trained on training data only. A true train test split would give a more accurate measure of how accurately it generalizes unseen players.</p>
   </section>
 
 </main>
