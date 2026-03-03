@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NBA Scoring Prediction — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="basketballRegression.css">
+
+</head>
+<body>
+
+<header>
+  <p class="tag">INFO 4604 · Portfolio Project 1 · Linear Regression</p>
+  <h1>Predicting NBA<br/><span>Scoring Output</span></h1>
+  <h2>Dylan Long</h2>
+  <p class="subtitle">A multiple linear regression model trained on 20+ years of NBA per-game statistics to predict points per game from player performance metrics.</p>
+</header>
+
+<main>
+
+  <!-- DATASET -->
+  <section>
+    <h2>01 — Dataset</h2>
+    <h3>NBA Stats 1947–Present</h3>
+    <p>
+      Data sourced from Basketball Reference via Kaggle
+      (<code style="font-family:'IBM Plex Mono',monospace; font-size:0.85em; color:var(--orange)">sumitrodatta/nba-aba-baa-stats</code>).
+      Filtered to the modern NBA era (2000–present) and players averaging 10+ minutes per game to ensure meaningful sample sizes.
+    </p>
+
+    <div class="stats">
+      <div class="stat-card">
+        <span class="num">~6,000</span>
+        <span class="label">Player-seasons</span>
+      </div>
+      <div class="stat-card">
+        <span class="num">24</span>
+        <span class="label">Seasons (2000–2024)</span>
+      </div>
+      <div class="stat-card">
+        <span class="num">10</span>
+        <span class="label">Input features</span>
+      </div>
+       <div class="stat-card">
+        <span class="num">0.974</span>
+        <span class="label">R^2 score</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE ENGINEERING -->
+  <section>
+    <h2>02 — Feature Engineering</h2>
+    <h3>Cleaning the data before modelling</h3>
+    <p>Feeding raw data straight into a model is one of the most common beginner mistakes. Five steps were applied before any model was trained.</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <div class="step-body">
+          <strong>Feature Selection</strong>
+          <span>Kept 10 relevant per-game stats and player position. Dropped biographical columns (age, birth year) that don't affect scoring.</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <div class="step-body">
+          <strong>Missing Values</strong>
+          <span>Dropped rows with NaN shooting percentages — these occur when a player never attempted that shot type.</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <div class="step-body">
+          <strong>Correlated Features</strong>
+          <span>Removed <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em">tov_per_game</code> — it was highly correlated with <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em">fga_per_game</code> (high-usage players do both). Keeping both gives the model redundant information.</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">04</span>
+        <div class="step-body">
+          <strong>Outliers</strong>
+          <span>Removed extreme rows (40+ PPG, 42+ MPG) using histogram-informed thresholds — only a handful of all-time seasons ever hit these numbers.</span>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">05</span>
+        <div class="step-body">
+          <strong>Normalization + Encoding</strong>
+          <span>Applied <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em">MinMaxScaler</code> to numeric features. One-hot encoded player position with <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em">pd.get_dummies()</code>.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODEL -->
+  <section>
+    <h2>03 — Model</h2>
+    <h3>Multiple Linear Regression</h3>
+    <p>
+      A <code style="font-family:'IBM Plex Mono',monospace;font-size:0.85em;color:var(--orange)">sklearn.linear_model.LinearRegression</code> model trained on the cleaned dataset. With 10 input features the model finds a hyperplane of best fit rather than a simple line.
+    </p>
+
+    <div class="code-block"><code><span class="kw">import</span> sklearn
+
+pts_model = sklearn.linear_model.LinearRegression()
+pts_model.fit(X, y)
+
+<span class="cm"># R-Squared</span>
+pts_model.score(X, y)
+
+<span class="cm"># Predict a new player</span>
+pts_model.predict(hypothetical_scaled_df)</code></div>
+
+    <div class="chart-placeholder">
+      <img class= "image" src="./Chart1.png"/>
+    </div>
+    <p style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--muted); margin-top:12px;">
+  Index 0 = fga_per_game · Index 1 = fg_percent · Index 2 = ft_percent · Index 3 = trb_per_game · Index 4 = ast_per_game · Index 5 = blk_per_game · Index 6 = x3p_percent · Index 7–13 = position encodings (PG, C, PF, SG, SF) · negative = mp_per_game, stl_per_game
+</p>
+
+    <div class="chart-placeholder" style="margin-top:16px;">
+      <img class="image" src="./Chart2.png"/>
+    </div>
+  </section>
+
+  <!-- INSIGHT -->
+  <section>
+    <h2>04 — Key Insight</h2>
+    <h3>Volume beats efficiency</h3>
+    <p>
+The model's coefficients tell a clear story: shot attempts per game (fga_per_game, coefficient ~33) is by far the strongest predictor of scoring. Field goal percentage is second (~10), meaning efficiency matters — but volume matters three times more. Interestingly, minutes played has a negative coefficient, which seems counterintuitive but makes sense on reflection: once shot attempts are already in the model, extra minutes without extra shots don't add points.    </p>
+
+
+    <div class="insight">
+      <p>"The model confirms what scouts have long suspected: in the NBA, getting to the line and taking shots matters more than how efficiently you convert them — at least for raw scoring output."</p>
+    </div>
+  </section>
+
+  <!-- LIMITATIONS -->
+  <section>
+    <h2>05 — Limitations</h2>
+    <h3>What the model can't see</h3>
+    <p>Per-game stats conflate player skill with coaching decisions — a player on a bad team may get more shot attempts simply because no one else is available. The model also can't account for role players (defensive specialists who aren't meant to score), injury-shortened seasons, or team offensive system.</p>
+    <p>A more complete model would incorporate team context, advanced metrics like usage rate, and opponent defensive ratings.</p>
+  </section>
+
+</main>
+
+<footer>
+  <span>INFO 4604 · Portfolio Project 1</span>
+  <a href="https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats" target="_blank">View Dataset →</a>
+</footer>
+
+</body>
+</html>
