@@ -9,7 +9,7 @@ A multiple linear regression model predicting NBA player points per game from pe
 - `basketballRegression.css` — stylesheet
 - `Chart1.png` — regression coefficient chart
 - `Chart2.png` — actual vs predicted scatter plot
-- `notebook.ipynb` — Google Colab notebook
+- `nba-stats-linear-regression-info.ipynb` — Google Colab notebook
 
 ## Data
 [NBA Stats 1947–Present](https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats) via Kaggle
